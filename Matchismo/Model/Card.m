@@ -14,6 +14,7 @@
 {
     int score = 0;
     for (Card *card in otherCards) {
+        //Card matches only if the cards are exactly the same
         if([card.contents isEqualToString:self.contents]){
             score = 1;
         }

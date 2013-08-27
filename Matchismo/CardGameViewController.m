@@ -10,9 +10,13 @@
 #import "PlayingCardDeck.h"
 #import "CardMatchingGame.h"
 
+//Interface: this area is where we put private properties and is called "Class Extension"
+//note the ()
 @interface CardGameViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *flipsLabel;
 @property (nonatomic) int flipCount;
+//This is now an NSArray which will contain all the UIButtons we connect in random order.
+//This randomness is ok for our purpose because the order of these cards will mean nothing to our matching game
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons; //array de cartas
 @property (strong, nonatomic) CardMatchingGame *game;
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
@@ -22,6 +26,9 @@
 
 - (CardMatchingGame *) game
 {
+    //Lazy instantiation: is the tactic of delaying the creation of an object, the calculation of a value, or some other expensive process until the first time it is needed.
+    //See how we are using our initializer here
+    //We get the card count from however many buttons are in our View.
     if(!_game) _game = [[CardMatchingGame alloc] initWithCardCount:[self.cardButtons count]
                                                          usingDeck:[[PlayingCardDeck alloc]init]];
     
@@ -30,6 +37,7 @@
 
 -(void) setCardButtons:(NSArray *)cardButtons
 {
+    //When we implement our setter, we can't forget this line or our setter won't set anymore!
     _cardButtons = cardButtons;
     [self updateUI];
 }
@@ -40,11 +48,16 @@
 //Hacer que la UI refleje el modelo
 - (void)updateUI
 {
+    //To update the UI, we just cycle through the card buttons, getting the asociated Card from the CardMatchingGame
     for(UIButton *cardButton in self.cardButtons){
         Card *card = [self.game cardAtIndex:[self.cardButtons indexOfObject:cardButton]];
+        //We set the title in the Selected state to be the Card's contents (if the content have not changed, this will do nothing)
         [cardButton setTitle:card.contents forState:UIControlStateSelected];
+        //We set the title when the button is both select & disable to also be the Card's contents
         [cardButton setTitle:card.contents forState:UIControlStateSelected | UIControlStateDisabled];
+        //We select the card only if it isFaceUp
         cardButton.selected = card.isFaceUp;
+        //Make the card untappable if it isUnplayable
         cardButton.enabled = !card.isUnplayable;
         cardButton.alpha = (card.isUnplayable ? 0.3 : 1.0);
     }
