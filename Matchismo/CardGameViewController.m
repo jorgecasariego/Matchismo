@@ -9,6 +9,7 @@
 #import "CardGameViewController.h"
 #import "PlayingCardDeck.h"
 #import "CardMatchingGame.h"
+#import "GameResult.h"
 
 //Interface: this area is where we put private properties and is called "Class Extension"
 //note the ()
@@ -20,9 +21,17 @@
 @property (strong, nonatomic) IBOutletCollection(UIButton) NSArray *cardButtons; //array de cartas
 @property (strong, nonatomic) CardMatchingGame *game;
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
+@property (strong, nonatomic) GameResult *gameResult;
 @end
 
 @implementation CardGameViewController
+
+
+- (GameResult *) gameResult
+{
+    if(!_gameResult) _gameResult = [[GameResult alloc] init];
+    return _gameResult;
+}
 
 - (CardMatchingGame *) game
 {
@@ -69,6 +78,16 @@
 {
     _flipCount = flipCount;
     self.flipsLabel.text = [NSString stringWithFormat:@"Flips: %d", self.flipCount];
+    self.gameResult.score = self.game.score;
+}
+
+
+- (IBAction)deal
+{
+    self.game = nil;
+    self.gameResult = nil;
+    self.flipCount = 0;
+    [self updateUI];
 }
 
 //Metodo que es llamado cada vez que aprieto el boton para dar la vuelta una carta
